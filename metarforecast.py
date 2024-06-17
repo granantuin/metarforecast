@@ -287,10 +287,10 @@ from keras.preprocessing.text import tokenizer_from_json
 
 
 #load model
-model = load_model("oaci+"model.keras"")
+model = load_model(oaci+"model.keras")
 
 # Load the JSON configuration from the file
-with open("/content/drive/MyDrive/Colab Notebooks/gpt/"+oaci+"/"+oaci+"tokenizer_config.json", 'r', encoding='utf-8') as f:
+with open(oaci+"tokenizer_config.json", 'r', encoding='utf-8') as f:
     tokenizer_json = json.load(f)
 
 # Rebuild tokenizer from the JSON configuration
