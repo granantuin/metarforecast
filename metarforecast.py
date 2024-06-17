@@ -184,7 +184,7 @@ def get_meteogalicia_model_4Km(coorde):
 
     return dffinal , control
 
-coor = pd.read_csv("oaci+"coor.csv"")
+coor = pd.read_csv(oaci+"coor.csv"")
 
 if oaci=="LEVX":
   df_all = get_meteogalicia_model_1Km(coor)[0]
