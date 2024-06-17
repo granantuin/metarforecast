@@ -7,16 +7,23 @@ Original file is located at
     https://colab.research.google.com/drive/1-2VOxmTSzwNFkTMlpWJ27KRDMmk8NZbS
 """
 
+
 #@title operational
 oaci = "LEVX" # @param ["LEVX", "LEST","LECO"]
-meteorologic_model = True
+options = ["LECO", "LEST","LEVX"]
+default_option = options[0]  # Set the default option
+
+# Create a radio button to select the string variable
+oaci = st.radio("Select airport", options, index=0)
+
+meteorologic_model = False
 
 import os
 import sys
 import numpy as np
 import pandas as pd
 from datetime import timedelta
-
+import streamlit as st
 
 sequence_length = 13
 
@@ -177,7 +184,7 @@ def get_meteogalicia_model_4Km(coorde):
 
     return dffinal , control
 
-coor = pd.read_csv("/content/drive/MyDrive/metar/"+oaci+"coor.csv")
+coor = pd.read_csv("oaci+"coor.csv"")
 
 if oaci=="LEVX":
   df_all = get_meteogalicia_model_1Km(coor)[0]
@@ -280,7 +287,7 @@ from keras.preprocessing.text import tokenizer_from_json
 
 
 #load model
-model = load_model("/content/drive/MyDrive/Colab Notebooks/gpt/"+oaci+"/"+oaci+"model.keras")
+model = load_model("oaci+"model.keras"")
 
 # Load the JSON configuration from the file
 with open("/content/drive/MyDrive/Colab Notebooks/gpt/"+oaci+"/"+oaci+"tokenizer_config.json", 'r', encoding='utf-8') as f:
@@ -401,21 +408,24 @@ result["y_pred"] = oaci.lower()+" "+result.index.strftime('%d%H%Mz')+" "+result[
 metar = get_metar(oaci,True)["metar_o"]
 global_r = pd.concat([result,metar],axis=1)
 
-
 for ind in range(2, len(global_r)):
     y_pred_value = global_r.iloc[ind]["y_pred"]
+    time_str = ""
     if pd.isna(y_pred_value):
-        print("Time:", global_r.iloc[ind]["metar_o"].split()[1][2:].upper())
+        time_str = global_r.iloc[ind]["metar_o"].split()[1][2:].upper()
     else:
         if isinstance(y_pred_value, str):
-            print("Time:", y_pred_value.split()[1][2:].upper())
+            time_str = y_pred_value.split()[1][2:].upper()
         else:
-            print("Time:", global_r.iloc[ind]["metar_o"].split()[1][2:].upper())
-
-    print("Real METAR:    ",global_r.iloc[ind]["metar_o"])
-    print("METAR forecast:",global_r.iloc[ind]["y_pred"])
+            time_str = global_r.iloc[ind]["metar_o"].split()[1][2:].upper()
+    
+    st.write("Time:", time_str)
+    st.write("Real METAR    :", global_r.iloc[ind]["metar_o"])
+    st.write("METAR forecast:", global_r.iloc[ind]["y_pred"])
     if meteorologic_model:
-     print("Meteorological model:",global_r.iloc[ind]["all"])
-    print("*************")
+        st.write("Meteorological model:", global_r.iloc[ind]["all"])
+    st.write("*************")
 
-display(pd.read_csv("/content/drive/MyDrive/Colab Notebooks/gpt/"+oaci+"/"+oaci+"score.csv").set_index("Unnamed: 0"))
+# Display the CSV file
+score_df = pd.read_csv(oaci + "score.csv").set_index("Unnamed: 0")
+st.dataframe(score_df)
