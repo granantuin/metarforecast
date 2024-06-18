@@ -13,6 +13,8 @@ import pandas as pd
 from datetime import timedelta
 import streamlit as st
 
+st.set_page_config(page_title="Metar Forecast",layout="wide")
+
 #@title operational
 oaci = "LEVX" # @param ["LEVX", "LEST","LECO"]
 options = ["LECO", "LEST","LEVX"]
